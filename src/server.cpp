@@ -2,6 +2,7 @@
 #include <optional>
 #include <queue>
 #include <unordered_set>
+#include <iostream>
 
 namespace io = boost::asio;
 using tcp = io::ip::tcp;
@@ -17,7 +18,7 @@ public:
 
     void start(message_handler&& on_message, error_handler&& on_error) {
         this->on_message = std::move(on_message);
-        this->on_error = std::move(on_error);
+        this->on_error_handler = std::move(on_error);
         async_read();
     }
 
@@ -51,8 +52,7 @@ private:
             async_read();
         }
         else {
-            socket.close(error);
-            on_error();
+            on_error(error);
         }
     }
 
@@ -74,8 +74,22 @@ private:
             }
         }
         else {
-            socket.close(error);
-            on_error();
+            on_error(error);
+        }
+    }
+
+    void on_error(const error_code& error) {
+        std::cerr << "Error in session: " << error.message() << "(code "
+            << error.value() << ")" << std::endl;
+
+        if (socket.is_open()) {
+            post("Error: " + error.message() + "\n");
+        }
+
+        socket.close();
+
+        if (on_error_handler) {
+            on_error_handler();
         }
     }
 
@@ -83,7 +97,7 @@ private:
     io::streambuf streambuf;
     std::queue<std::string> outgoing;
     message_handler on_message;
-    error_handler on_error;
+    error_handler on_error_handler;
 };
 
 class server {
@@ -109,6 +123,9 @@ public:
                             post("We are one less\n\r");
                         }
                     });
+            } else {
+                std::cerr << "Accept error: " << error.message()
+                    << " (code " << error.value() << ")" << std::endl;
             }
             async_accept();
         });
@@ -127,9 +144,15 @@ private:
 };
 
 int main() {
-    io::io_context io_context;
-    server srv(io_context, 15001);
-    srv.async_accept();
-    io_context.run();
+    setlocale(LC_ALL, "Rus");
+
+    try {
+        io::io_context io_context;
+        server srv(io_context, 15001);
+        srv.async_accept();
+        io_context.run();
+    } catch (const std::exception& e) {
+        std::cerr << "Critical server error: " << e.what() << std::endl;
+    }
     return 0;
 }
