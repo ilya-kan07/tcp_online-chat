@@ -7,11 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(BOOST_ROOT "C:/local/boost_1_86_0")
 
-# Указываем флаги компилятора для поддержки C++17 (если требуется)
-# например для GCC или Clang:
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
 find_package(Boost REQUIRED COMPONENTS system)
+
+add_definitions(-D_WIN32_WINNT=0x0601)
 
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
