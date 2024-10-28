@@ -13,9 +13,9 @@ add_definitions(-D_WIN32_WINNT=0x0601)
 
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
-add_executable(server ${SOURCE_DIR}/server.cpp)
+add_executable(server ${SOURCE_DIR}/server/server.cpp)
 
-add_executable(client ${SOURCE_DIR}/client.cpp)
+add_executable(client ${SOURCE_DIR}/client/client.cpp)
 
 target_link_libraries(server Boost::system)
 target_link_libraries(client Boost::system)
