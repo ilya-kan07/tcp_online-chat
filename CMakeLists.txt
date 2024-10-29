@@ -15,7 +15,7 @@ set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 add_executable(server ${SOURCE_DIR}/server/server.cpp)
 
-add_executable(client ${SOURCE_DIR}/client/client.cpp)
+add_executable(client ${SOURCE_DIR}/client/client.cpp ${SOURCE_DIR}/client/main.cpp)
 
 target_link_libraries(server Boost::system)
 target_link_libraries(client Boost::system)
