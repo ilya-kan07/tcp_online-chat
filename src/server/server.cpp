@@ -1,4 +1,4 @@
-#include "..\..\include\server\server.hpp"
+#include "..\..\include\server.hpp"
 
 session::session(tcp::socket&& socket) : socket(std::move(socket)) {};
 
