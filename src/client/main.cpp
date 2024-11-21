@@ -1,24 +1,37 @@
 #include "..\..\include\client.hpp"
 
-int main() {
-    try {
-        io::io_context io_context;
+#include "..\..\include\window.hpp"
 
-        auto client = std::make_shared<async_tcp_client>(io_context, "127.0.0.1", "15001");
-        client->start();
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
 
-        std::thread io_thread([&io_context]() { io_context.run(); });
+    regwindow registrationWindow;
+    registrationWindow.show();
 
-        std::string message;
-        while (std::getline(std::cin, message)) {
-            client->send_message(message);
-        }
-
-        io_thread.join();
-    }
-    catch (std::exception& e) {
-        std::cerr << "Exception: " << e.what() << "\n";
-    }
-
-    return 0;
+    return a.exec();
 }
+
+
+// int main() {
+//     try {
+//         io::io_context io_context;
+
+//         auto client = std::make_shared<async_tcp_client>(io_context, "127.0.0.1", "15001");
+//         client->start();
+
+//         std::thread io_thread([&io_context]() { io_context.run(); });
+
+//         std::string message;
+//         while (std::getline(std::cin, message)) {
+//             client->send_message(message);
+//         }
+
+//         io_thread.join();
+//     }
+//     catch (std::exception& e) {
+//         std::cerr << "Exception: " << e.what() << "\n";
+//     }
+
+//     return 0;
+// }
